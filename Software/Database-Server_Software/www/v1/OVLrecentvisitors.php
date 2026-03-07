@@ -11,8 +11,12 @@
 //
 
 include 'OVLcommonfunctions.php';
+$AUTH_BASE_PATH = '../';  
+include $AUTH_BASE_PATH . 'auth_check.php';
+requireRole(['manager', 'admin', 'MoD']);  // Require manager, admin, or MoD role
 
-$today = new DateTime();  
+
+$today = new DateTime();
 $today->setTimeZone(new DateTimeZone("America/Los_Angeles"));
 $today->add(new DateInterval('P1D'));  // end date for select will be midnight tonight
 $nowSQL = $today->format("Y-m-d");
@@ -28,6 +32,10 @@ debugToUser( "OVLdebug is active. " . $nowSQL .  "<br>");
 // allowWebAccess();  // if IP not allowed, then die
 
 // get the HTML skeleton
+ob_start();
+include $AUTH_BASE_PATH . 'auth_header.php';
+echo ob_get_clean();
+
 $html = file_get_contents("OVLrecentvisitors.html");
 if (!$html){
   die("unable to open file");
@@ -47,7 +55,7 @@ if (mysqli_connect_errno()) {
     //logfile("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast FROM ovl_visits " 
+$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast FROM ovl_visits "
         . " WHERE dateCheckinLocal between '" . $fiveDaysAgoSQL . "'"
         . "         AND '" . $nowSQL . "'"
         . " ORDER BY dateCheckinLocal DESC, nameLast ASC, nameFirst ASC";
@@ -73,12 +81,12 @@ if (!$result) {
             $outputTable = $outputTable . makeRow($row["dateCheckinLocal"],$row["nameFirst"], $row["nameLast"]);
         }
     }
-    $outputTable = $outputTable . "</TABLE>"; 
+    $outputTable = $outputTable . "</TABLE>";
 
     // replace the divs in the html
     $html = str_replace("<<DIVSHERE>>", $outputTable, $html);
     echo $html;
-    
+
 }
 
 // close the database connection
@@ -92,7 +100,7 @@ die;
 
 // make a div
 function makeRow($checkinDate, $nameFirst, $nameLast) {
-    
+
     $div = "<tr>"
         . "<td>Date: " . substr($checkinDate,0,10) . "</td>"
         . "<td style='padding:0 20px 0 0'>" . $nameFirst . "  " . $nameLast . "</td>"
