@@ -14,6 +14,9 @@ function allowWebAccess() {
 	$allowedIPs = array (  
         '12.33.220.202' // MN public ip at Orleans
 		,'173.228.112.184'   // Jim in San Carlos 
+		,'23.93.132.249'    // Giulio in RWC
+		,'192.184.163.102' // Giulio also
+		,'23.119.5.41' // MN 1Gbps
 	);
 
 	$rtnvalue = false;
