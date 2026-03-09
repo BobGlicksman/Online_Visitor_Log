@@ -1,0 +1,121 @@
+<HTML>
+<!-- 
+    title: OVLexportvisitors.html
+
+    description: This is the web page that allows admins to export visitor data to CSV files
+
+    created: 2026-03-08
+    by: Jim Schrempp
+    copyright Maker Nexus:
+        This work is licensed under a Attribution/Share Alike/Non Commercial (cc) 2026 Maker Nexus
+-->
+    
+<HEAD>
+    <TITLE>Export Visitors</TITLE>
+    <meta name="robots" content="noindex, nofollow">
+    <META NAME="Author" CONTENT="">
+    <META NAME="Keywords" CONTENT="">
+    <META NAME="Description" CONTENT="">
+    <link rel="stylesheet" type="text/css" href="OVLstyles.css">
+    <style>
+        .export-form {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f5f5f5;
+            max-width: 600px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+        .form-group input {
+            padding: 5px;
+            font-size: 14px;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        .button-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .button-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .csv-links {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #4CAF50;
+            background-color: #e8f5e9;
+        }
+        .csv-links h4 {
+            margin-top: 0;
+        }
+        .csv-links a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .csv-links a:hover {
+            background-color: #45a049;
+        }
+        .info-box {
+            margin: 20px;
+            padding: 15px;
+            border: 1px solid #2196F3;
+            background-color: #e3f2fd;
+            max-width: 600px;
+        }
+    </style>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<H3>Export Visitors - Admin Only</H3>
+
+<div class="info-box">
+    <p><strong>Instructions:</strong> Select a date range to export visitor records. 
+    The system will generate separate CSV files for each visit reason category.</p>
+    <p><strong>Filters Applied:</strong></p>
+    <ul>
+        <li>Only visitors with email addresses</li>
+        <li>Excludes "forgot badge" visits</li>
+        <li>Grouped by visit reason</li>
+    </ul>
+</div>
+
+<div class="export-form">
+    <form method="POST" action="">
+        <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" value="<<STARTDATE>>" required>
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate" value="<<ENDDATE>>" required>
+        </div>
+        <div class="button-group">
+            <input type="submit" name="generateCSV" value="Generate CSV Files">
+        </div>
+    </form>
+</div>
+
+<<CSVLINKS>>
+
+</BODY>
+
+</HTML>
