@@ -61,17 +61,33 @@
         .csv-links h4 {
             margin-top: 0;
         }
-        .csv-links a {
+        .csv-links a.zip-download {
             display: block;
-            margin: 10px 0;
-            padding: 10px;
+            margin: 10px 0 20px 0;
+            padding: 15px;
             background-color: #4CAF50;
             color: white;
             text-decoration: none;
             border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
         }
-        .csv-links a:hover {
+        .csv-links a.zip-download:hover {
             background-color: #45a049;
+        }
+        .file-details {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+        }
+        .file-details ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        .file-details li {
+            margin: 5px 0;
         }
         .info-box {
             margin: 20px;
@@ -89,7 +105,7 @@
 
 <div class="info-box">
     <p><strong>Instructions:</strong> Select a date range to export visitor records. 
-    The system will generate separate CSV files for each visit reason category.</p>
+    The system will generate a ZIP file containing separate CSV files for each visit reason category.</p>
     <p><strong>Filters Applied:</strong></p>
     <ul>
         <li>Only visitors with email addresses</li>
@@ -109,7 +125,7 @@
             <input type="date" id="endDate" name="endDate" value="<<ENDDATE>>" required>
         </div>
         <div class="button-group">
-            <input type="submit" name="generateCSV" value="Generate CSV Files">
+            <input type="submit" name="generateCSV" value="Generate ZIP Export">
         </div>
     </form>
 </div>
