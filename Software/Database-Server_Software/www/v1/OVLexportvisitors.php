@@ -42,6 +42,9 @@ if (isset($_POST['generateCSV'])) {
     
     // Generate CSV files
     $csvFiles = generateCSVFiles($startDate, $endDate);
+    
+    // Create ZIP file
+    $zipFileName = createZipFile($csvFiles, $startDate, $endDate);
 }
 
 // Get the HTML skeleton
@@ -62,17 +65,27 @@ $html = str_replace("<<ENDDATE>>", $endDate, $html);
 
 // Add CSV download links if files were generated
 $csvLinksHTML = "";
-if (isset($csvFiles) && !empty($csvFiles)) {
+if (isset($zipFileName) && !empty($zipFileName)) {
     $csvLinksHTML = '<div class="csv-links">';
-    $csvLinksHTML .= '<h4>CSV Files Generated:</h4>';
+    $csvLinksHTML .= '<h4>Export Ready:</h4>';
     
+    // Count total records
+    $totalRecords = 0;
     foreach ($csvFiles as $file) {
-        $fileName = basename($file['path']);
-        $count = $file['count'];
-        $category = $file['category'];
-        $csvLinksHTML .= '<a href="' . $fileName . '" download>' . 
-                         $category . ' (' . $count . ' records)</a>';
+        $totalRecords += $file['count'];
     }
+    
+    $csvLinksHTML .= '<a href="' . $zipFileName . '" download class="zip-download">' . 
+                     'Download All Visitors (' . count($csvFiles) . ' files, ' . $totalRecords . ' total records)</a>';
+    
+    $csvLinksHTML .= '<div class="file-details">';
+    $csvLinksHTML .= '<p><strong>Files included in ZIP:</strong></p>';
+    $csvLinksHTML .= '<ul>';
+    foreach ($csvFiles as $file) {
+        $csvLinksHTML .= '<li>' . $file['category'] . ': ' . $file['count'] . ' records</li>';
+    }
+    $csvLinksHTML .= '</ul>';
+    $csvLinksHTML .= '</div>';
     
     $csvLinksHTML .= '</div>';
 }
@@ -194,6 +207,56 @@ function generateCSVFiles($startDate, $endDate) {
     mysqli_close($con);
     
     return $csvFiles;
+}
+
+/**
+ * Create a ZIP file containing all CSV files
+ */
+function createZipFile($csvFiles, $startDate, $endDate) {
+    global $OVLdebug;
+    
+    if (empty($csvFiles)) {
+        return '';
+    }
+    
+    // Create ZIP filename with date range
+    $zipFileName = 'visitor_exports_' . $startDate . '_to_' . $endDate . '.zip';
+    
+    // Create new ZIP archive
+    $zip = new ZipArchive();
+    
+    if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+        echo "Error: Unable to create ZIP file<br>";
+        return '';
+    }
+    
+    // Add each CSV file to the ZIP
+    foreach ($csvFiles as $file) {
+        $filePath = $file['path'];
+        $fileName = basename($filePath);
+        
+        if (file_exists($filePath)) {
+            $zip->addFile($filePath, $fileName);
+            if ($OVLdebug) {
+                echo "Added to ZIP: " . $fileName . "<br>";
+            }
+        }
+    }
+    
+    $zip->close();
+    
+    // Delete the individual CSV files after creating ZIP
+    foreach ($csvFiles as $file) {
+        $filePath = $file['path'];
+        if (file_exists($filePath)) {
+            unlink($filePath);
+            if ($OVLdebug) {
+                echo "Deleted: " . $filePath . "<br>";
+            }
+        }
+    }
+    
+    return $zipFileName;
 }
 
 /**
