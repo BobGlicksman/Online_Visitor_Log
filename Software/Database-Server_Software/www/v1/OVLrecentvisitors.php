@@ -55,10 +55,11 @@ if (mysqli_connect_errno()) {
     //logfile("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast FROM ovl_visits "
+$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast, email FROM ovl_visits "
         . " WHERE dateCheckinLocal between '" . $fiveDaysAgoSQL . "'"
         . "         AND '" . $nowSQL . "'"
-        . " ORDER BY dateCheckinLocal DESC, nameLast ASC, nameFirst ASC";
+        . " ORDER BY dateCheckinLocal DESC, nameLast ASC, nameFirst ASC"
+        . " LIMIT 100";
 
 $result = mysqli_query($con, $sql);
 if (!$result) {
@@ -71,14 +72,15 @@ if (!$result) {
 
     // create the divs
 
-    $outputTable = "<TABLE>";
+    $outputTable = "<TABLE>"
+        . "<tr><th>Date</th><th>Time</th><th>Name</th><th>Email</th></tr>";
     if (mysqli_num_rows($result) == 0) {
-        $outputTable = "<tr><td>No visitors in last five days</td></tr>";
+        $outputTable .= "<tr><td colspan='4'>No visitors in last five days</td></tr>";
     } else {
         // loop over all rows
         while ($row = mysqli_fetch_assoc($result)) {
             //echo "row: " . $row["nameFirst"] . " " . $row["nameLast"] . "<br>";
-            $outputTable = $outputTable . makeRow($row["dateCheckinLocal"],$row["nameFirst"], $row["nameLast"]);
+            $outputTable .= makeRow($row["dateCheckinLocal"], $row["nameFirst"], $row["nameLast"], $row["email"]);
         }
     }
     $outputTable = $outputTable . "</TABLE>";
@@ -98,12 +100,17 @@ die;
 // -------------------------------------
 // Functions
 
-// make a div
-function makeRow($checkinDate, $nameFirst, $nameLast) {
+// make a row
+function makeRow($checkinDate, $nameFirst, $nameLast, $email) {
+
+    $date = substr($checkinDate, 0, 10);
+    $time = substr($checkinDate, 11, 5);  // extract HH:MM from datetime
 
     $div = "<tr>"
-        . "<td>Date: " . substr($checkinDate,0,10) . "</td>"
+        . "<td>" . $date . "</td>"
+        . "<td>" . $time . "</td>"
         . "<td style='padding:0 20px 0 0'>" . $nameFirst . "  " . $nameLast . "</td>"
+        . "<td>" . htmlspecialchars($email) . "</td>"
         . "</tr>\r\n";
     return $div;
 }
