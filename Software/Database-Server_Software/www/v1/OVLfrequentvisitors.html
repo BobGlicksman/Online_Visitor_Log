@@ -1,8 +1,8 @@
 <HTML>
 <!-- 
-    title: OVLtodayvisitors.html
+    title: OVLfrequentvisitors.html
 
-    description: This is the web page that shows who visited in the last few days
+    description: This is the web page that shows visitors who have visited more than 3 times in the last 3 months
 
     created: 2024-10-02
     by: Jim Schrempp
@@ -11,7 +11,7 @@
 -->
     
 <HEAD>
-    <TITLE>Recent Visitors</TITLE>
+    <TITLE>Frequent Visitors</TITLE>
     <meta name="robots" content="noindex, nofollow">
     <META NAME="Author" CONTENT="">
     <META NAME="Keywords" CONTENT="">
@@ -45,11 +45,10 @@
         table.visitor-table tr:hover {
             background-color: #d9e6f7;
         }
-        table.visitor-table .col-date { width: 100px; }
-        table.visitor-table .col-time { width: 70px; }
         table.visitor-table .col-name { width: 200px; }
         table.visitor-table .col-email { }
-        table.visitor-table .col-reason { }
+        table.visitor-table .col-count { width: 100px; text-align: center; }
+        table.visitor-table .col-reasons { }
         p.no-visitors {
             padding: 20px;
             color: #888;
@@ -60,7 +59,7 @@
 
 <BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
 
-<H3>Recent Visitors</H3>
+<H3>Frequent Visitors (more than 4 visits in last 3 months)</H3>
 
     <<DIVSHERE>>
 
