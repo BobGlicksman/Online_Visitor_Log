@@ -55,10 +55,11 @@ if (mysqli_connect_errno()) {
     //logfile("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast FROM ovl_visits "
+$sql = "SELECT recNum, dateCheckinLocal, nameFirst, nameLast, email, visitReason FROM ovl_visits "
         . " WHERE dateCheckinLocal between '" . $fiveDaysAgoSQL . "'"
         . "         AND '" . $nowSQL . "'"
-        . " ORDER BY dateCheckinLocal DESC, nameLast ASC, nameFirst ASC";
+        . " ORDER BY dateCheckinLocal DESC, nameLast ASC, nameFirst ASC"
+        . " LIMIT 100";
 
 $result = mysqli_query($con, $sql);
 if (!$result) {
@@ -71,14 +72,15 @@ if (!$result) {
 
     // create the divs
 
-    $outputTable = "<TABLE>";
+    $outputTable = "<TABLE class='visitor-table'>"
+        . "<tr><th class='col-date'>Date</th><th class='col-time'>Time</th><th class='col-name'>Name</th><th class='col-email'>Email</th><th class='col-reason'>Reason</th></tr>";
     if (mysqli_num_rows($result) == 0) {
-        $outputTable = "<tr><td>No visitors in last five days</td></tr>";
+        $outputTable .= "<tr><td colspan='5'><p class='no-visitors'>No visitors in last five days</p></td></tr>";
     } else {
         // loop over all rows
         while ($row = mysqli_fetch_assoc($result)) {
             //echo "row: " . $row["nameFirst"] . " " . $row["nameLast"] . "<br>";
-            $outputTable = $outputTable . makeRow($row["dateCheckinLocal"],$row["nameFirst"], $row["nameLast"]);
+            $outputTable .= makeRow($row["dateCheckinLocal"], $row["nameFirst"], $row["nameLast"], $row["email"], $row["visitReason"]);
         }
     }
     $outputTable = $outputTable . "</TABLE>";
@@ -98,12 +100,19 @@ die;
 // -------------------------------------
 // Functions
 
-// make a div
-function makeRow($checkinDate, $nameFirst, $nameLast) {
+// make a row
+function makeRow($checkinDate, $nameFirst, $nameLast, $email, $visitReason) {
+
+    $date = substr($checkinDate, 0, 10);
+    $time = substr($checkinDate, 11, 5);  // extract HH:MM from datetime
+    $timeDisplay = date("g:i A", strtotime($checkinDate));  // format as 3:45 PM
 
     $div = "<tr>"
-        . "<td>Date: " . substr($checkinDate,0,10) . "</td>"
-        . "<td style='padding:0 20px 0 0'>" . $nameFirst . "  " . $nameLast . "</td>"
+        . "<td>" . htmlspecialchars($date) . "</td>"
+        . "<td>" . $timeDisplay . "</td>"
+        . "<td>" . htmlspecialchars($nameFirst . " " . $nameLast) . "</td>"
+        . "<td>" . htmlspecialchars($email) . "</td>"
+        . "<td>" . htmlspecialchars($visitReason) . "</td>"
         . "</tr>\r\n";
     return $div;
 }
